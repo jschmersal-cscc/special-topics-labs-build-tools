@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.cscc.topics</groupId>
+    <artifactId>example1</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!-- This is the dependency section.  When you want to import code from another library, you need to fill this
+         section in.  Pro tip: In IntelliJ if you type the class name you want to import, when it turns red hit
+         [Alt]-[Enter] and you will be presented with an option to import as a maven dependency, which will fill out this
+         section for you -->
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+
+        <!-- Dependencies have the concept of a "scope", which is an indication of where the library is and is not available.
+             For example, you don't want junit (a testing library) to appear as part of your production application.
+             Marking these artifacts as "test" scope means they're only used during test phases
+             -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Note that there's not much in this pom.xml.  Nothing specifying where to pick up the java code or the tests.
+         If you're using maven, and you follow convention (code in src/main/java, tests in src/test/java) then that
+         will be built and tested for free
+         -->
+
+</project>

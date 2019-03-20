@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.cscc.topics</groupId>
+    <artifactId>example5</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <!-- use the fabric8 docker-maven-plugin to build a docker image containing our jar -->
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.21.0</version>
+                <configuration>
+                    <verbose>true</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-hello-world-image</id>
+                        <goals>
+                            <!-- one of the goals the docker-maven-plugin supports is "build", which is what we want.  It will
+                                 build a docker image -->
+                            <goal>build</goal>
+                        </goals>
+                        <!-- bind it to the "package" phase... what phase you build the image in is important, as you need
+                             to be able to access the jar (which is produced earlier in the package phase... so you don't want
+                             to run it in the "compile" phase, for example -->
+                        <phase>package</phase>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>edu.cscc.topics/hello-world</name>
+                                    <build>
+                                        <!-- where is the Dockerfile located? -->
+                                        <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+                                        <!-- copy this project's artifact into the "build cache" that docker uses to populate into the image -->
+                                        <assembly>
+                                            <descriptorRef>artifact</descriptorRef>
+                                        </assembly>
+                                        <!-- tag our docker image with two different tags, "latest" and the current version -->
+                                        <tags>
+                                            <tag>latest</tag>
+                                            <tag>${project.version}</tag>
+                                        </tags>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

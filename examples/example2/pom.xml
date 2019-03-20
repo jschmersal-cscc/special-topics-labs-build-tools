@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.cscc.topics</groupId>
+    <artifactId>example2</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.14</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+    <plugins>
+    <!-- use the maven-assembly-plugin to create an "uber" jar that contains this module's code plus its dependencies, all in one jar" -->
+    <plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <version>3.1.0</version>
+    <configuration>
+        <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+
+        <!-- This has the effect of replacing the original artifact (the one without the dependencies) with
+             the one I am about to create.  You will get a warning though
+        <appendAssemblyId>false</appendAssemblyId>
+        -->
+
+        <!-- this stanza makes the jar executable... you can then run "java -jar <jar-name>.jar" from the command line -->
+        <archive>
+            <manifest>
+                <mainClass>edu.cscc.topics.EncodingTools</mainClass>
+            </manifest>
+        </archive>
+    </configuration>
+    <executions>
+        <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+                <!-- I have no idea why the maven assembly plugin's goal is called "single", but it is -->
+                <goal>single</goal>
+            </goals>
+        </execution>
+    </executions>
+    </plugin>
+    </plugins>
+    </build>
+
+</project>

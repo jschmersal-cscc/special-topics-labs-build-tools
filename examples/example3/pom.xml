@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.cscc.topics</groupId>
+    <artifactId>example3</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <build>
+        <!-- If you need to do something that maven lifecycle doesn't support by default, then you probably need to start
+             using plugins.  There is a huge variety of maven plugins (unfortunately many are laughably poorly documented).
+             This example uses a couple. -->
+        <plugins>
+            <plugin>
+                <!-- The first plugin we use is the failsafe plugin.  It is used to run integration tests -->
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- Here we tell failsafe to run the integration-test and verify goals.  The goals are separate
+                                 to allow for a post-integration-test phase that will give you a spot to undo anything that
+                                 was done during the pre-integration-test phase (maven won't move to the next phase if the
+                                 current one fails) -->
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- The exec plugin lets you run arbitrary command line executables.  It's a handy way to run shell scripts
+                     and the like... if a bit verbose -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>pre-integration-test-start-docker</id>
+                        <!-- the first execution is bound to the pre-integration-test phase, and runs the "exec" goal of
+                             the plugin.  Note that some plugins have their goals bound to a default phase that they run
+                             in (see the failsafe plugin above), but others - like exec - just have goals you can run and
+                             you need to tell maven which phase to run them in -->
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>-dit</argument>
+                                <argument>--rm</argument>
+                                <argument>-v</argument>
+                                <argument>${project.build.directory}/classes/:/usr/local/apache2/htdocs/</argument>
+                                <argument>--name</argument>
+                                <argument>example3-integration-test-apache</argument>
+                                <argument>-p</argument>
+                                <argument>8999:80</argument>
+                                <argument>httpd:2.4</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test-stop-docker</id>
+                        <!-- Note this execution is still using the exec goal, but is bound to a different phase -->
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>rm</argument>
+                                <argument>-f</argument>
+                                <argument>example3-integration-test-apache</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Here's another testing library that we're pulling in -->
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <version>2.40.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
